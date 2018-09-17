@@ -111,7 +111,6 @@ def print_oneliner(cards, lists):
 
 def format_as_todotxt():
     config = utils.readconfig("trello2misc.ini")
-    todotxtTasks = todotxt.read_todotxtfile()
     allCardsBoards = config.get("trello", "allCardsBoards")
     myCardsBoards = config.get("trello", "myCardsBoards")
     allCardsBoardNames = []
@@ -127,6 +126,8 @@ def format_as_todotxt():
     cards = trello.read_all_trello_cards(allCardsBoardNames, boards)
     cards.update(trello.read_my_trello_cards(myCardsBoardNames, boards))
     cards = trello.filter_cards(cards, lists)
+
+    todotxtTasks = todotxt.read_todotxtfile()
     trelloTasks = generate_todotxttasks(cards, lists, boards,
                                         allCardsBoardNames)
     tasks = merge_tasks(trelloTasks, todotxtTasks)
@@ -150,6 +151,7 @@ def format_as_txt():
     cards = trello.read_all_trello_cards(allCardsBoardNames, boards)
     cards.update(trello.read_my_trello_cards(myCardsBoardNames, boards))
     cards = trello.filter_cards(cards, lists)
+
     sortedCards = trello.sort_cards(cards, lists)
     print_oneliner(sortedCards, lists)
 
