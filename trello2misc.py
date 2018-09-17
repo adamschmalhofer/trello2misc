@@ -109,48 +109,46 @@ def print_oneliner(cards, lists):
         print(string)
 
 
+def load_from_trello():
+    config = utils.readconfig("trello2misc.ini")
+    allCardsBoards = config.get("trello", "allCardsBoards")
+    myCardsBoards = config.get("trello", "myCardsBoards")
+    allCardsBoardNames = []
+    myCardsBoardNames = []
+    for name in allCardsBoards.split(","):
+        allCardsBoardNames.append(name.replace("\"", "").strip())
+    for name in myCardsBoards.split(","):
+        myCardsBoardNames.append(name.replace("\"", "").strip())
+    boardNames = allCardsBoardNames + myCardsBoardNames
+    boards = trello.read_my_trello_boards()
+    boards = trello.filter_trello_boards(boardNames, boards)
+    lists = trello.read_trello_lists(boards)
+    cards = trello.read_all_trello_cards(allCardsBoardNames, boards)
+    cards.update(trello.read_my_trello_cards(myCardsBoardNames, boards))
+    cards = trello.filter_cards(cards, lists)
+    return {'cards': cards, 'lists': lists, 'boards': boards,
+            'allCardsBoardNames': allCardsBoardNames}
+
+
+def format_as_todotxt(cards, lists, boards, allCardsBoardNames):
+    todotxtTasks = todotxt.read_todotxtfile()
+    trelloTasks = generate_todotxttasks(cards, lists, boards,
+                                        allCardsBoardNames)
+    tasks = merge_tasks(trelloTasks, todotxtTasks)
+    todotxt.write_tasks(tasks)
+
+
+def format_as_txt(cards, lists, **rest):
+    sortedCards = trello.sort_cards(cards, lists)
+    print_oneliner(sortedCards, lists)
+
+
 # The main method processes the given command.
 def main(command):
-    config = utils.readconfig("trello2misc.ini")
     if command == "todotxt":
-        todotxtTasks = todotxt.read_todotxtfile()
-        allCardsBoards = config.get("trello", "allCardsBoards")
-        myCardsBoards = config.get("trello", "myCardsBoards")
-        allCardsBoardNames = []
-        myCardsBoardNames = []
-        for name in allCardsBoards.split(","):
-            allCardsBoardNames.append(name.replace("\"", "").strip())
-        for name in myCardsBoards.split(","):
-            myCardsBoardNames.append(name.replace("\"", "").strip())
-        boardNames = allCardsBoardNames + myCardsBoardNames
-        boards = trello.read_my_trello_boards()
-        boards = trello.filter_trello_boards(boardNames, boards)
-        lists = trello.read_trello_lists(boards)
-        cards = trello.read_all_trello_cards(allCardsBoardNames, boards)
-        cards.update(trello.read_my_trello_cards(myCardsBoardNames, boards))
-        cards = trello.filter_cards(cards, lists)
-        trelloTasks = generate_todotxttasks(cards, lists, boards,
-                                            allCardsBoardNames)
-        tasks = merge_tasks(trelloTasks, todotxtTasks)
-        todotxt.write_tasks(tasks)
+        format_as_todotxt(**load_from_trello())
     elif command == "stdout":
-        allCardsBoards = config.get("trello", "allCardsBoards")
-        myCardsBoards = config.get("trello", "myCardsBoards")
-        allCardsBoardNames = []
-        myCardsBoardNames = []
-        for name in allCardsBoards.split(","):
-            allCardsBoardNames.append(name.replace("\"", "").strip())
-        for name in myCardsBoards.split(","):
-            myCardsBoardNames.append(name.replace("\"", "").strip())
-        boardNames = allCardsBoardNames + myCardsBoardNames
-        boards = trello.read_my_trello_boards()
-        boards = trello.filter_trello_boards(boardNames, boards)
-        lists = trello.read_trello_lists(boards)
-        cards = trello.read_all_trello_cards(allCardsBoardNames, boards)
-        cards.update(trello.read_my_trello_cards(myCardsBoardNames, boards))
-        cards = trello.filter_cards(cards, lists)
-        sortedCards = trello.sort_cards(cards, lists)
-        print_oneliner(sortedCards, lists)
+        format_as_txt(**load_from_trello())
     elif command == "help" or command == "usage":
         print("Usage: ./trello2misc.py [stdout|todotxt|help]?")
     else:
