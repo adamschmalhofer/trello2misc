@@ -23,7 +23,7 @@ class TodotxtTask:
                 input_format = ("%Y-%m-%dT%H:%M:%S.%fZ"
                                 if "-" in self.due else "%dT%H:%M:%S.%fZ")
                 self.due = datetime.datetime.strptime(self.due, input_format
-                                                      ).strftime("%d")
+                                                      ).strftime("%Y-%m-%d")
             except ValueError:
                 self.due = ""
 
