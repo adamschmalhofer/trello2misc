@@ -10,8 +10,11 @@ Author: André Bergholz
 Version: 1.0
 """
 
-import sys, datetime
-import trello, todotxt, utils
+import sys
+import datetime
+import trello
+import todotxt
+import utils
 
 __version__ = "1.0"
 __date__ = "2013/02/28"
@@ -19,7 +22,8 @@ __updated__ = "2014/08/15"
 __author__ = "André Bergholz (bergholz@gmail.com)"
 __license__ = "GPL3"
 
-# Returns the list of todo.txt tasks generated from 
+
+# Returns the list of todo.txt tasks generated from
 # the information contained in the Trello cards.
 def generate_todotxttasks(cards, lists, boards, allCardsBoardNames):
     tasks = []
@@ -37,9 +41,11 @@ def generate_todotxttasks(cards, lists, boards, allCardsBoardNames):
                 due = ""
             else:
                 due = card.due
-            task = todotxt.TodotxtTask(card.name, priority, label, context, due)
+            task = todotxt.TodotxtTask(card.name, priority, label, context,
+                                       due)
             tasks.append(task)
     return tasks
+
 
 # Returns a priority for a given Trello card
 def generate_priority(card, lists):
@@ -51,11 +57,11 @@ def generate_priority(card, lists):
     bList = []
     cList = []
     for name in aLists.split(","):
-        aList.append(name.replace("\"","").strip())
+        aList.append(name.replace("\"", "").strip())
     for name in bLists.split(","):
-        bList.append(name.replace("\"","").strip())
+        bList.append(name.replace("\"", "").strip())
     for name in cLists.split(","):
-        cList.append(name.replace("\"","").strip())
+        cList.append(name.replace("\"", "").strip())
     listName = lists[card.list]
     if listName in aList:
         priority = "A"
@@ -66,6 +72,7 @@ def generate_priority(card, lists):
     else:
         priority = ""
     return priority
+
 
 # Returns a list of merged todo.txt tasks
 # from the base tasks (which existed previously)
@@ -82,13 +89,15 @@ def merge_tasks(newTasks, baseTasks):
             tasks.append(task)
     return tasks
 
+
 # Prints the current card dictionary to screen.
 def print_oneliner(cards, lists):
-    lines = []
     for card in cards:
         string = "%s" % (lists[card.list])
         if card.due is not None:
-            stripped = datetime.datetime.strptime(card.due, "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%Y-%m-%d")
+            stripped = datetime.datetime.strptime(card.due,
+                                                  "%Y-%m-%dT%H:%M:%S.%fZ"
+                                                  ).strftime("%Y-%m-%d")
             string += " %s" % (stripped)
         string += ": %s" % (card.name)
         if len(card.labels) > 0:
@@ -98,6 +107,7 @@ def print_oneliner(cards, lists):
             string = string.strip()
             string += ")"
         print(string)
+
 
 # The main method processes the given command.
 def main(command):
@@ -109,9 +119,9 @@ def main(command):
         allCardsBoardNames = []
         myCardsBoardNames = []
         for name in allCardsBoards.split(","):
-            allCardsBoardNames.append(name.replace("\"","").strip())
+            allCardsBoardNames.append(name.replace("\"", "").strip())
         for name in myCardsBoards.split(","):
-            myCardsBoardNames.append(name.replace("\"","").strip())
+            myCardsBoardNames.append(name.replace("\"", "").strip())
         boardNames = allCardsBoardNames + myCardsBoardNames
         boards = trello.read_my_trello_boards()
         boards = trello.filter_trello_boards(boardNames, boards)
@@ -119,7 +129,8 @@ def main(command):
         cards = trello.read_all_trello_cards(allCardsBoardNames, boards)
         cards.update(trello.read_my_trello_cards(myCardsBoardNames, boards))
         cards = trello.filter_cards(cards, lists)
-        trelloTasks = generate_todotxttasks(cards, lists, boards, allCardsBoardNames)
+        trelloTasks = generate_todotxttasks(cards, lists, boards,
+                                            allCardsBoardNames)
         tasks = merge_tasks(trelloTasks, todotxtTasks)
         todotxt.write_tasks(tasks)
     elif command == "stdout":
@@ -128,9 +139,9 @@ def main(command):
         allCardsBoardNames = []
         myCardsBoardNames = []
         for name in allCardsBoards.split(","):
-            allCardsBoardNames.append(name.replace("\"","").strip())
+            allCardsBoardNames.append(name.replace("\"", "").strip())
         for name in myCardsBoards.split(","):
-            myCardsBoardNames.append(name.replace("\"","").strip())
+            myCardsBoardNames.append(name.replace("\"", "").strip())
         boardNames = allCardsBoardNames + myCardsBoardNames
         boards = trello.read_my_trello_boards()
         boards = trello.filter_trello_boards(boardNames, boards)
@@ -146,11 +157,11 @@ def main(command):
         print("Unsupported command: " + command)
         print("Usage: ./trello2misc.py [stdout|todotxt|help]?")
 
+
 # The main program.
 if __name__ == '__main__':
     if (len(sys.argv) < 2):
         command = "help"
-    else: 
+    else:
         command = sys.argv[1].lower().strip()
     main(command)
-
