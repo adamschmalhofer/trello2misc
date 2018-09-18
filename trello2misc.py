@@ -95,11 +95,7 @@ def print_oneliner(cards, lists):
             string += " %s" % (stripped)
         string += ": %s" % (card.name)
         if len(card.labels) > 0:
-            string += " ("
-            for label in card.labels[0:2]:
-                string += "%s " % (label)
-            string = string.strip()
-            string += ")"
+            string += " (%s)" % " ".join(card.labels[0:2])
         print(string)
 
 
