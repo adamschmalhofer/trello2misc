@@ -27,9 +27,10 @@ __license__ = "GPL3"
 # the information contained in the Trello cards.
 def generate_todotxttasks(cards, lists, boards, allCardsBoardNames):
     tasks = []
+    priority_dict = listname_to_priority_dict()
     for card in cards.values():
         if not card.closed and card.board in boards:
-            priority = generate_priority(card, lists)
+            priority = generate_priority(card, lists, priority_dict)
             label = (card.labels[0] if len(card.labels) > 0 else "")
             context = ("trello"
                        if boards[card.board].name in allCardsBoardNames
@@ -53,11 +54,11 @@ def listname_to_priority_dict():
 
 
 # Returns a priority for a given Trello card
-def generate_priority(card, lists):
+def generate_priority(card, lists, priority_dict):
     listName = lists[card.list]
     priority = ""
     try:
-        priority = listname_to_priority_dict()[listName]
+        priority = priority_dict[listName]
     except KeyError:
         pass
     return priority
