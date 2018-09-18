@@ -149,10 +149,9 @@ def main(command):
         format_as_todotxt(**load_from_trello())
     elif command == "stdout":
         format_as_txt(**load_from_trello())
-    elif command == "help" or command == "usage":
-        print("Usage: ./trello2misc.py [stdout|todotxt|help]?")
     else:
-        print("Unsupported command: " + command)
+        if command not in ["help", "usage"]:
+            print("Unsupported command: " + command)
         print("Usage: ./trello2misc.py [stdout|todotxt|help]?")
 
 
