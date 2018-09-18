@@ -87,15 +87,15 @@ def merge_tasks(newTasks, baseTasks):
 # Prints the current card dictionary to screen.
 def print_oneliner(cards, lists):
     for card in cards:
-        string = "%s" % (lists[card.list])
-        if card.due is not None:
-            stripped = datetime.datetime.strptime(card.due,
-                                                  "%Y-%m-%dT%H:%M:%S.%fZ"
-                                                  ).strftime("%Y-%m-%d")
-            string += " %s" % (stripped)
-        string += ": %s" % (card.name)
-        if len(card.labels) > 0:
-            string += " (%s)" % " ".join(card.labels[0:2])
+        due = (" " + datetime.datetime.strptime(card.due,
+                                                "%Y-%m-%dT%H:%M:%S.%fZ"
+                                                ).strftime("%Y-%m-%d")
+               if card.due is not None
+               else "")
+        labels = (" (%s)" % " ".join(card.labels[0:2])
+                  if len(card.labels) > 0
+                  else "")
+        string = "%s%s%s: %s" % (lists[card.list], due, labels, card.name)
         print(string)
 
 
