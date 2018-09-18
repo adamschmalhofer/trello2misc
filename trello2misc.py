@@ -41,24 +41,25 @@ def generate_todotxttasks(cards, lists, boards, allCardsBoardNames):
     return tasks
 
 
-# Returns a priority for a given Trello card
-def generate_priority(card, lists):
+def listname_to_priority_dict():
     config = utils.readconfig("trello2misc.ini")
     aLists = config.get("trello", "aLists")
     bLists = config.get("trello", "bLists")
     cLists = config.get("trello", "cLists")
-    aList = [name.replace("\"", "").strip() for name in aLists.split(",")]
-    bList = [name.replace("\"", "").strip() for name in bLists.split(",")]
-    cList = [name.replace("\"", "").strip() for name in cLists.split(",")]
+    aList = {name.replace("\"", "").strip(): 'A' for name in aLists.split(",")}
+    bList = {name.replace("\"", "").strip(): 'B' for name in bLists.split(",")}
+    cList = {name.replace("\"", "").strip(): 'C' for name in cLists.split(",")}
+    return {**aList, **bList, **cList}
+
+
+# Returns a priority for a given Trello card
+def generate_priority(card, lists):
     listName = lists[card.list]
-    if listName in aList:
-        priority = "A"
-    elif listName in bList:
-        priority = "B"
-    elif listName in cList:
-        priority = "C"
-    else:
-        priority = ""
+    priority = ""
+    try:
+        priority = listname_to_priority_dict()[listName]
+    except KeyError:
+        pass
     return priority
 
 
