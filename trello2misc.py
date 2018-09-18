@@ -103,12 +103,10 @@ def load_from_trello():
     config = utils.readconfig("trello2misc.ini")
     allCardsBoards = config.get("trello", "allCardsBoards")
     myCardsBoards = config.get("trello", "myCardsBoards")
-    allCardsBoardNames = []
-    myCardsBoardNames = []
-    for name in allCardsBoards.split(","):
-        allCardsBoardNames.append(name.replace("\"", "").strip())
-    for name in myCardsBoards.split(","):
-        myCardsBoardNames.append(name.replace("\"", "").strip())
+    allCardsBoardNames = [name.replace("\"", "").strip()
+                          for name in allCardsBoards.split(",")]
+    myCardsBoardNames = [name.replace("\"", "").strip()
+                         for name in myCardsBoards.split(",")]
     boardNames = allCardsBoardNames + myCardsBoardNames
     boards = trello.read_my_trello_boards()
     boards = trello.filter_trello_boards(boardNames, boards)
