@@ -15,7 +15,7 @@ class TodotxtTask:
     def __init__(self, entry, priority, project, context, due):
         self.entry = re.sub("^\\(\d+\\)\s+", "", entry).strip()
         self.priority = priority.strip()
-        self.project = project.title().replace(" ", "").strip()
+        self.project = project.replace(" ", "").strip()
         self.context = context.replace(" ", "").lower().strip()
         self.due = due
         if len(self.due) > 0:
@@ -52,9 +52,8 @@ class TodotxtTask:
 def read_todotxtfile():
     config = utils.readconfig("trello2misc.ini")
     fileName = config.get("todotxt", "fileName")
-    theFile = open(fileName, "r")
-    lines = theFile.readlines()
-    theFile.close()
+    with open(fileName, "r") as theFile:
+        lines = theFile.readlines()
     tasks = [parse_todotxtline(line) for line in lines]
     return tasks
 
@@ -91,7 +90,6 @@ def parse_todotxtline(line):
 def write_tasks(tasks):
     config = utils.readconfig("trello2misc.ini")
     fileName = config.get("todotxt", "fileName")
-    theFile = open(fileName, "w")
-    for task in tasks:
-        theFile.write(repr(task) + "\n")
-    theFile.close()
+    with open(fileName, "w") as theFile:
+        for task in tasks:
+            theFile.write(repr(task) + "\n")
