@@ -47,15 +47,9 @@ def generate_priority(card, lists):
     aLists = config.get("trello", "aLists")
     bLists = config.get("trello", "bLists")
     cLists = config.get("trello", "cLists")
-    aList = []
-    bList = []
-    cList = []
-    for name in aLists.split(","):
-        aList.append(name.replace("\"", "").strip())
-    for name in bLists.split(","):
-        bList.append(name.replace("\"", "").strip())
-    for name in cLists.split(","):
-        cList.append(name.replace("\"", "").strip())
+    aList = [name.replace("\"", "").strip() for name in aLists.split(",")]
+    bList = [name.replace("\"", "").strip() for name in bLists.split(",")]
+    cList = [name.replace("\"", "").strip() for name in cLists.split(",")]
     listName = lists[card.list]
     if listName in aList:
         priority = "A"
