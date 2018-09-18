@@ -64,7 +64,7 @@ def read_todotxtfile():
 
 # Returns a task object from a one line string representation.
 def parse_todotxtline(line):
-    entry = ""
+    entry_words = []
     priority = ""
     project = ""
     context = ""
@@ -84,8 +84,8 @@ def parse_todotxtline(line):
         elif token.startswith('due:'):
             due = token[4:] + "T11:00:00.000Z"
         else:
-            entry += token + " "
-    entry = entry.strip()
+            entry_words.append(token)
+    entry = ' '.join(entry_words)
     task = TodotxtTask(entry, priority, project, context, due)
     return task
 
