@@ -76,12 +76,13 @@ def generate_priority(card, lists, priority_dict):
 def merge_tasks(newTasks, baseTasks):
     tasks = baseTasks
     for task in newTasks:
-        if task in tasks:
+        try:
             index = tasks.index(task)
+        except ValueError:
+            tasks.append(task)
+        else:
             tasks[index].priority = task.priority
             tasks[index].due = task.due
-        else:
-            tasks.append(task)
     return tasks
 
 
