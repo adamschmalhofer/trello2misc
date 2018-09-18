@@ -44,13 +44,13 @@ def generate_todotxttasks(cards, lists, boards, allCardsBoardNames):
 
 def listname_to_priority_dict():
     config = utils.readconfig("trello2misc.ini")
-    aLists = config.get("trello", "aLists")
-    bLists = config.get("trello", "bLists")
-    cLists = config.get("trello", "cLists")
-    aList = {name.replace("\"", "").strip(): 'A' for name in aLists.split(",")}
-    bList = {name.replace("\"", "").strip(): 'B' for name in bLists.split(",")}
-    cList = {name.replace("\"", "").strip(): 'C' for name in cLists.split(",")}
-    return {**aList, **bList, **cList}
+    ret = {}
+    for priority in ["A", "B", "C"]:
+        config_key = "%sLists" % priority.lower()
+        lists = config.get("trello", config_key)
+        ret.update({name.replace("\"", "").strip(): priority
+                   for name in lists.split(",")})
+    return ret
 
 
 # Returns a priority for a given Trello card
