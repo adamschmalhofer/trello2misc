@@ -55,10 +55,7 @@ def read_todotxtfile():
     theFile = open(fileName, "r")
     lines = theFile.readlines()
     theFile.close()
-    tasks = []
-    for line in lines:
-        task = parse_todotxtline(line)
-        tasks.append(task)
+    tasks = [parse_todotxtline(line) for line in lines]
     return tasks
 
 
