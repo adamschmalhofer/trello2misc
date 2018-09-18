@@ -95,6 +95,10 @@ default settings for some inspiration here.
 cLists - Names of lists, for which cards should be assigned priority C. See the
 default settings for some inspiration here.
 
+dLists, eLists, …, zLists (optional) - Names of lists, for which cards should
+be assigned priority D, E, …, Z. If you define e.g. kLists then you must also
+define all lists with a higher priority e.g. aLists, …, jLists.
+
 
 Usage
 -----

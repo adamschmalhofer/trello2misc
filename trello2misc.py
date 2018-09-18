@@ -10,7 +10,9 @@ Author: André Bergholz
 Version: 1.0
 """
 
+import string
 import sys
+import configparser
 import datetime
 import trello
 import todotxt
@@ -45,9 +47,12 @@ def generate_todotxttasks(cards, lists, boards, allCardsBoardNames):
 def listname_to_priority_dict():
     config = utils.readconfig("trello2misc.ini")
     ret = {}
-    for priority in ["A", "B", "C"]:
+    for priority in string.ascii_uppercase[:26]:
         config_key = "%sLists" % priority.lower()
-        lists = config.get("trello", config_key)
+        try:
+            lists = config.get("trello", config_key)
+        except configparser.NoOptionError:
+            break
         ret.update({name.replace("\"", "").strip(): priority
                    for name in lists.split(",")})
     return ret
