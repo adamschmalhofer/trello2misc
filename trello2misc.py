@@ -30,17 +30,11 @@ def generate_todotxttasks(cards, lists, boards, allCardsBoardNames):
     for card in cards.values():
         if not card.closed and card.board in boards:
             priority = generate_priority(card, lists)
-            label = ""
-            if len(card.labels) > 0:
-                label = card.labels[0]
-            if boards[card.board].name in allCardsBoardNames:
-                context = "trello"
-            else:
-                context = boards[card.board].name
-            if card.due is None:
-                due = ""
-            else:
-                due = card.due
+            label = (card.labels[0] if len(card.labels) > 0 else "")
+            context = ("trello"
+                       if boards[card.board].name in allCardsBoardNames
+                       else boards[card.board].name)
+            due = (card.due if card.due is not None else "")
             task = todotxt.TodotxtTask(card.name, priority, label, context,
                                        due)
             tasks.append(task)
@@ -157,8 +151,5 @@ def main(command):
 
 # The main program.
 if __name__ == '__main__':
-    if (len(sys.argv) < 2):
-        command = "help"
-    else:
-        command = sys.argv[1].lower().strip()
+    command = (sys.argv[1].lower().strip() if len(sys.argv) >= 2 else "help")
     main(command)
