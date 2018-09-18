@@ -33,12 +33,12 @@ def generate_todotxttasks(cards, lists, boards, allCardsBoardNames):
     for card in cards.values():
         if not card.closed and card.board in boards:
             priority = generate_priority(card, lists, priority_dict)
-            label = (card.labels[0] if len(card.labels) > 0 else "")
+            label = card.labels
             context = ("trello"
                        if boards[card.board].name in allCardsBoardNames
                        else boards[card.board].name)
             due = (card.due if card.due is not None else "")
-            task = todotxt.TodotxtTask(card.name, priority, label, context,
+            task = todotxt.TodotxtTask(card.name, priority, label, [context],
                                        due)
             tasks.append(task)
     return tasks

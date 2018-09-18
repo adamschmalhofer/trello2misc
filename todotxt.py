@@ -15,8 +15,8 @@ class TodotxtTask:
     def __init__(self, entry, priority, project, context, due):
         self.entry = re.sub("^\\(\d+\\)\s+", "", entry).strip()
         self.priority = priority.strip()
-        self.project = project.replace(" ", "").strip()
-        self.context = context.replace(" ", "").lower().strip()
+        self.project = [p.replace(" ", "").strip() for p in project]
+        self.context = [c.replace(" ", "").lower().strip() for c in context]
         self.due = due
         if len(self.due) > 0:
             try:
@@ -29,16 +29,12 @@ class TodotxtTask:
 
     # The one line string representation of a task.
     def __repr__(self):
-        string = ""
-        if len(self.priority) > 0:
-            string += "(%s) " % (self.priority)
-        string += "%s" % (self.entry)
-        if len(self.project) > 0:
-            string += " +%s" % (self.project)
-        if len(self.context) > 0:
-            string += " @%s" % (self.context)
-        if len(self.due) > 0:
-            string += " due:%s" % (self.due)
+        priority = ("(%s) " % (self.priority)
+                    if len(self.priority) > 0 else "")
+        projects = [" +%s" % p for p in self.project]
+        contexts = [" @%s" % c for c in self.context]
+        due = " due:%s" % (self.due) if len(self.due) > 0 else ""
+        string = ''.join([priority, self.entry, *projects, *contexts, due])
         return string
 
     # Two tasks are equal if the text entry is the same.
@@ -62,8 +58,8 @@ def read_todotxtfile():
 def parse_todotxtline(line):
     entry_words = []
     priority = ""
-    project = ""
-    context = ""
+    project = []
+    context = []
     due = ""
     tokens = re.split(r'\s+', line)
     index = 0
@@ -74,9 +70,9 @@ def parse_todotxtline(line):
     for i in range(index, len(tokens)):
         token = tokens[i]
         if token.startswith('+'):
-            project = token[1:]
+            project.append(token[1:])
         elif token.startswith('@'):
-            context = token[1:]
+            context.append(token[1:])
         elif token.startswith('due:'):
             due = token[4:] + "T11:00:00.000Z"
         else:
