@@ -12,7 +12,7 @@ import utils
 class TodotxtTask:
 
     # The constructor.
-    def __init__(self, entry, priority, project, context, due):
+    def __init__(self, entry, priority, project, context, due, as_str=None):
         self.entry = re.sub("^\\(\d+\\)\s+", "", entry).strip()
         self.priority = priority.strip()
         self.project = [p.replace(" ", "").strip() for p in project]
@@ -26,9 +26,12 @@ class TodotxtTask:
                                                       ).strftime("%Y-%m-%d")
             except ValueError:
                 self.due = ""
+        self.as_str=as_str
 
     # The one line string representation of a task.
     def __repr__(self):
+        if self.as_str is not None:
+            return self.as_str
         priority = ("(%s) " % (self.priority)
                     if len(self.priority) > 0 else "")
         projects = [" +%s" % p for p in self.project]
@@ -42,6 +45,11 @@ class TodotxtTask:
     # to be updated.
     def __eq__(self, other):
         return self.entry == other.entry
+
+    def update(self, priority, due):
+        self.as_str = None
+        self.priority = priority
+        self.due = due
 
 
 # Returns a list of tasks read from the current todo.txt file.
@@ -78,7 +86,7 @@ def parse_todotxtline(line):
         else:
             entry_words.append(token)
     entry = ' '.join(entry_words)
-    task = TodotxtTask(entry, priority, project, context, due)
+    task = TodotxtTask(entry, priority, project, context, due, line)
     return task
 
 

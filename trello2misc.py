@@ -81,8 +81,7 @@ def merge_tasks(newTasks, baseTasks):
         except ValueError:
             tasks.append(task)
         else:
-            tasks[index].priority = task.priority
-            tasks[index].due = task.due
+            tasks[index].update(task.priority, task.due)
     return tasks
 
 
